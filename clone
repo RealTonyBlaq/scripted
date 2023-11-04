@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Script clones a repository easily and configures name and username and
+#+ also creates a README.md file, which is optional.
+
+# To use this script:
+#+ You would have to set the email, username
+#+ and pat(Personal Access Token from Github) variables
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 1 ]; then
+	echo "Usage: $0 <repository_link>"
+	exit 1
+fi
+
+# Enter your details for the following variables:
+email="YOUR_EMAIL_ADDRESS"
+username="YOUR_GITHUB_USERNAME"
+pat="YOUR_PERSONAL_ACCESS_TOKEN"
+#.
+
+link="$1"
+repo="${link:0:8}${pat}@${link:8}"
+git clone "$repo"
+dir="$(echo "$1" | cut -d '/' -f5 | cut -d '.' -f1)"
+cd "$dir"
+git config --global user.email "$email"
+git config --global user.name "$username"
+echo ""
+echo "Username and email configured successfully!"
+echo ""
+read -p "Do you want to create README.md file? [Y / N] " reply
+if [ "$reply" = "Y" ] || [ "$reply" = "y" ]; then
+	read -p "Enter text: " text
+	echo "$text" > README.md
+fi
+exit 0
