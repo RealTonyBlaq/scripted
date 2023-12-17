@@ -1,0 +1,54 @@
+#!/bin/bash
+# Script makes pushing code to github easier and
+#+ prints total push count at every push.
+# Return: 0 on success, otherwise 1.
+
+if [ "$#" -lt 1 ]; then
+	echo "Usage: commit <option> <file(s)>"
+	echo "<option>: all - Commits all files with one commit message"
+	echo "<file(s)>: your files"
+	exit 1
+fi
+
+i=1
+switch=0
+push_count=0
+file="all"
+if [ "$1" = all ]; then
+	if [ -e "$file" ]; then
+		echo "File [ all ] exists"
+		read -p "Are you trying to commit it? [Y/N] " reply
+		if [ "$reply" = Y ] || [ "$reply" = y ]; then
+			echo "Got it.."
+		elif [ "$reply" = N ] || [ "$reply" = n ]; then
+			i=2
+			switch=1
+			read -p "Enter a one-time commit message: " message
+		else
+			echo "$reply - invalid response"
+			echo "Cancelled..."
+			exit 1
+		fi
+	else
+		i=2
+		switch=1
+		read -p "Enter a one-time commit message: " message
+	fi
+fi
+
+while [ "$i" -le "$#" ]
+do
+	echo ""
+	echo "============= Pushing [${!i}] =============="
+	if [ "$switch" -eq 0 ]; then
+		read -p "Enter your commit message: " message
+	fi
+	git add ${!i}
+	git commit -m "$message"
+	git push
+	((i++))
+	((push_count++))
+done
+echo "Total commits: $push_count"
+
+exit 0
