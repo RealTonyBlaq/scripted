@@ -65,7 +65,7 @@ fi
 
 # if the all arg is used
 if [ "$1" = all ]; then
-	# check if a file named all exists with the dir
+	# check if a file named (all) exists within the dir
 	if [ -e "$file" ]; then
 		echo "all: File exists"
 		read -rp "Are you trying to commit it? [Y/N] " reply
