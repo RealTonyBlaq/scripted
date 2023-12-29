@@ -1,54 +1,116 @@
 #!/bin/bash
-# Script makes pushing code to github easier and
-#+ prints total push count at every push.
-# Return: 0 on success, otherwise 1.
+# Script makes pushing code to github easier
 
+# Checking if the arguments were passed to this script
 if [ "$#" -lt 1 ]; then
 	echo "Usage: commit <option> <file(s)>"
-	echo "<option>: all - Commits all files with one commit message"
+	echo "<option>: all - Commits all files with one commit message
+	  auto - commits the file being worked on automatically"
 	echo "<file(s)>: your files"
 	exit 1
 fi
+#.
 
 i=1
 switch=0
 push_count=0
 file="all"
+
+# when the auto option is used
+if [ "$1" = auto ]; then
+	# check if the second argument was passed, otherwise the last modified file is used
+	if [ ! "$2" ]; then
+		current="$(ls -t | head -n 1)"
+	else
+		current="$2"
+	fi
+
+	# check if file exists, otherwise print a string and exit with a status 1
+	if [ -e "$current" ]; then
+		read -rp "Enter auto commit message: " msg
+		flag=1
+		while true; do
+			if [ "$push_count" -gt 0 ]; then
+				# check the modification time of the file
+				new_modif_time="$(find "$current" -maxdepth 1 -type f -printf "%TH:%TM\n")"
+				if [ "$new_modif_time" == "$last_modif_time" ]; then
+					flag=0
+				else
+					flag=1
+				fi
+			fi
+			# if flag == 1, it means that the file has been modified or it's the first push
+			if [ "$flag" -eq 1 ]; then
+			echo "======== Pushing [ $current ] ========="
+				git add "$current"
+				git commit -m "$msg"
+				git push
+				last_modif_time="$(find "$current" -maxdepth 1 -type f -printf "%TH:%TM\n")"
+				((push_count++))
+				echo "Total commits: $push_count"
+				echo ""
+			else
+				echo "commit: cannot push '$current': No changes since last commit ($last_modif_time)"
+				echo ""
+				sleep 40
+				continue
+			fi
+			sleep 75
+		done
+	else
+		echo "commit: cannot push '$current': File not found"
+	fi
+	exit 0
+fi
+
+# if the all arg is used
 if [ "$1" = all ]; then
+	# check if a file named all exists with the dir
 	if [ -e "$file" ]; then
-		echo "File [ all ] exists"
-		read -p "Are you trying to commit it? [Y/N] " reply
+		echo "all: File exists"
+		read -rp "Are you trying to commit it? [Y/N] " reply
+		# testing the reply from read input
 		if [ "$reply" = Y ] || [ "$reply" = y ]; then
 			echo "Got it.."
 		elif [ "$reply" = N ] || [ "$reply" = n ]; then
 			i=2
 			switch=1
-			read -p "Enter a one-time commit message: " message
+			read -rp "Enter a one-time commit message: " message
 		else
-			echo "$reply - invalid response"
-			echo "Cancelled..."
+			echo "commit: cannot parse '$reply': Invalid response"
+			echo "Cancelled."
 			exit 1
 		fi
+		#.
 	else
 		i=2
 		switch=1
-		read -p "Enter a one-time commit message: " message
+		read -rp "Enter a one-time commit message: " message
 	fi
 fi
 
 while [ "$i" -le "$#" ]
 do
-	echo ""
-	echo "============= Pushing [${!i}] =============="
-	if [ "$switch" -eq 0 ]; then
-		read -p "Enter your commit message: " message
+	if [ -e "${!i}" ]; then
+		echo ""
+		echo "============= Pushing [${!i}] =============="
+		if [ "$switch" -eq 0 ]; then
+			read -rp "Enter your commit message: " message
+		fi
+		git add "${!i}"
+		git commit -m "$message"
+		git push
+		((push_count++))
+	else
+		echo "commit: cannot access '${!i}': File not found"
+		if [ "$#" -eq 1 ]; then
+			exit 1
+		fi
 	fi
-	git add ${!i}
-	git commit -m "$message"
-	git push
 	((i++))
-	((push_count++))
 done
-echo "Total commits: $push_count"
+if [ "$push_count" -gt 0 ]; then
+	echo "Total commits: $push_count"
+fi
 
 exit 0
