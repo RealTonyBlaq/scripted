@@ -27,5 +27,8 @@ if not file:
 
     new_files = repo.untracked_files
     changed_files = [file.a_path for file in repo.index.diff(None)]
+
+
+    for file
     print(changed_files)
     repo.close()
