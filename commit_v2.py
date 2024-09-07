@@ -19,8 +19,9 @@ redis_client = redis.Redis()
 
 if not file:
     cwd = os.getcwd()
-    repo = git.Repo(cwd)
+    try:
+        repo = git.Repo(cwd)
+    ex
 
     print(repo.untracked_files)
     print([file.a_path for file in repo.index.diff(None)])
-    print(repo.git.status())
