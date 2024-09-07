@@ -6,8 +6,9 @@ import redis
 from sys import argv
 import os
 
-
-file = argv[1]
+try:
+    file = argv[1]
+except 
 redis_client = redis.Redis()
 
 
