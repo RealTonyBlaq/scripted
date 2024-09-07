@@ -28,7 +28,7 @@ if not file:
     new_files = repo.untracked_files
     changed_files = [file.a_path for file in repo.index.diff(None)]
 
-
+    message = input('Please enter a commit message: ')
 
     for file in changed_files:
         repo.git.add(file)
