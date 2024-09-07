@@ -12,3 +12,5 @@ redis_client = redis.Redis()
 
 
 if not file:
+    cwd = os.getcwd()
+    print(cwd)
