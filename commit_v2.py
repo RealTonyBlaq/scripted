@@ -31,6 +31,7 @@ if not file:
 
     for file in changed_files:
         repo.git.add(file)
-        repo.commit()
+        repo.commit('-m', "test")
+        rep
     print(changed_files)
     repo.close()
