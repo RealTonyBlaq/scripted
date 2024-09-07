@@ -24,9 +24,7 @@ if not file:
         repo = git.Repo(cwd)
     except git.exc.InvalidGitRepositoryError as e:
         dir = e.args[0].split('/')[3]
-        repo = git.Repo(f'/home/tony/')
-        print(new_cwd)
-        exit(1)
+        repo = git.Repo(f'/home/tony/{dir}')
 
     print(repo.untracked_files)
     print([file.a_path for file in repo.index.diff(None)])
