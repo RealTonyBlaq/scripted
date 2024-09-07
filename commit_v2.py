@@ -27,5 +27,5 @@ if not file:
         repo = git.Repo(f'/home/tony/{dir}')
 
     print(repo.untracked_files)
-    print([file.a_path for file in repo.index.diff(None)])
+    changed[file.a_path for file in repo.index.diff(None)]
     repo.close()
