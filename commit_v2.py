@@ -23,7 +23,8 @@ if not file:
     try:
         repo = git.Repo(cwd)
     except git.exc.InvalidGitRepositoryError as e:
-        new_cwd = e.args[0].split('/')[3]
+        dir = e.args[0].split('/')[3]
+        re
         print(new_cwd)
         exit(1)
 
