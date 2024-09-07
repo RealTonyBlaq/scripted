@@ -6,9 +6,13 @@ import redis
 from sys import argv
 import os
 
+
+file = None
 try:
     file = argv[1]
-except 
+except IndexError:
+    pass
+
 redis_client = redis.Redis()
 
 
