@@ -3,6 +3,8 @@
 
 import git
 import redis
+from sys import argv
 
 
-file = sys
+file = argv[1]
+redisclient = redis.Redis()
