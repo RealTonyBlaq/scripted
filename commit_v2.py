@@ -4,9 +4,11 @@
 import git
 import redis
 from sys import argv
+import os
 
 
 file = argv[1]
-client = redis.Redis()
+redis_client = redis.Redis()
 
 
+if not file:
