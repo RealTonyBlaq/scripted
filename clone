@@ -4,7 +4,7 @@
 
 # To use this script:
 #+ You would have to set the email, username
-#+ and pat(Personal Access Token from Github) variables
+#+ and PAT(Personal Access Token from Github) variables
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 1 ]; then
 	echo "Usage: $0 <repository_link>"
