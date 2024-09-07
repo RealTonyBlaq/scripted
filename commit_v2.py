@@ -16,7 +16,7 @@ except IndexError:
     pass
 
 redis_client = redis.Redis()
-
+redis_client.close()
 
 if not file:
     cwd = os.getcwd()
