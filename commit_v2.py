@@ -3,7 +3,6 @@
 
 import git
 import git.exc
-import git.repo
 import redis
 from sys import argv
 import os
