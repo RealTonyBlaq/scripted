@@ -24,7 +24,7 @@ if not file:
         repo = git.Repo(cwd)
     except git.exc.InvalidGitRepositoryError as e:
         dir = e.args[0].split('/')[3]
-        re
+        repo = git.Repo(f'/home/tony/')
         print(new_cwd)
         exit(1)
 
