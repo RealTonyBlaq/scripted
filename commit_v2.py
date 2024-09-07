@@ -26,6 +26,6 @@ if not file:
         dir = e.args[0].split('/')[3]
         repo = git.Repo(f'/home/tony/{dir}')
 
-    print(repo.untracked_files)
-    changed[file.a_path for file in repo.index.diff(None)]
+    new_files = repo.untracked_files
+    changed_files = [file.a_path for file in repo.index.diff(None)]
     repo.close()
