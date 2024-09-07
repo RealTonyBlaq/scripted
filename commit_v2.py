@@ -32,7 +32,7 @@ if not file:
 
     for file in changed_files:
         repo.git.add(file)
-        repo.commit('-m', message)
+        repo.git.com
         repo.push()
         print('None')
 
