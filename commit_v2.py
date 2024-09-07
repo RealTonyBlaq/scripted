@@ -29,6 +29,7 @@ if not file:
     changed_files = [file.a_path for file in repo.index.diff(None)]
 
 
-    for file
+    for file in changed_files:
+        
     print(changed_files)
     repo.close()
