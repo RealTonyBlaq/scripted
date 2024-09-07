@@ -22,4 +22,4 @@ if not file:
     repo = git.Repo(cwd)
 
     print()
-    print(repo.index.diff())
+    print([file.a_path for file in repo.index.diff()])
