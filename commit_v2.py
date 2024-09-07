@@ -19,4 +19,6 @@ redis_client = redis.Redis()
 
 if not file:
     cwd = os.getcwd()
-    repo = git.repo
+    repo = git.Repo(cwd)
+
+    print(repo.)
