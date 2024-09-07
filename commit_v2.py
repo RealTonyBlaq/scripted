@@ -22,4 +22,4 @@ if not file:
     repo = git.Repo(cwd)
 
     print(repo.untracked_files)
-    print([file.a_path for file in repo.index.diff()])
+    print([file.a_path for file in repo.index.diff(None)])
