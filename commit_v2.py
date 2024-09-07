@@ -21,4 +21,5 @@ if not file:
     cwd = os.getcwd()
     repo = git.Repo(cwd)
 
+    print()
     print(repo.index.diff())
