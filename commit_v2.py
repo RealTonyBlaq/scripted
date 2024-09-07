@@ -29,9 +29,11 @@ if not file:
     changed_files = [file.a_path for file in repo.index.diff(None)]
 
 
+
     for file in changed_files:
         repo.git.add(file)
-        repo.commit('-m', "test")
-        rep
+        repo.commit('-m',)
+        repo.push()
+
     print(changed_files)
     repo.close()
