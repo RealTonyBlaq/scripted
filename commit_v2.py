@@ -7,4 +7,6 @@ from sys import argv
 
 
 file = argv[1]
-redisclient = redis.Redis()
+client = redis.Redis()
+
+
