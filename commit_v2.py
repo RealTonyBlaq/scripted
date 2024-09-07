@@ -23,7 +23,7 @@ if not file:
     try:
         repo = git.Repo(cwd)
     except git.exc.InvalidGitRepositoryError as e:
-        new
+        new_cwd = e.split('/')
         exit(1)
 
     print(repo.untracked_files)
