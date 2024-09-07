@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script makes pushing code to github easier..
+# Script makes pushing code to github easier
 
 # Checking if the arguments were passed to this script
 if [ "$#" -lt 1 ]; then
