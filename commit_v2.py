@@ -23,6 +23,7 @@ if not file:
     try:
         repo = git.Repo(cwd)
     except git.exc.InvalidGitRepositoryError as e:
+        print(os.getcwd)
         dir = e.args[0].split('/')[3]
         repo = git.Repo(f'/home/tony/{dir}')
 
