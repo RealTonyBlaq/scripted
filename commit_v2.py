@@ -30,6 +30,7 @@ if not file:
 
 
     for file in changed_files:
-        repo.git.add()
+        repo.git.add(file)
+        
     print(changed_files)
     repo.close()
