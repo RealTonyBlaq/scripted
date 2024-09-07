@@ -21,5 +21,5 @@ if not file:
     cwd = os.getcwd()
     repo = git.Repo(cwd)
 
-    print()
+    print(repo.untracked_files)
     print([file.a_path for file in repo.index.diff()])
