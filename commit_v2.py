@@ -2,6 +2,7 @@
 """ Script manages Git commands - add, commit and push """
 
 import git
+import git.exc
 import git.repo
 import redis
 from sys import argv
@@ -21,7 +22,8 @@ if not file:
     cwd = os.getcwd()
     try:
         repo = git.Repo(cwd)
-    ex
+    except git.exc.InvalidGitRepositoryError as e:
+        print(e.args.)
 
     print(repo.untracked_files)
     print([file.a_path for file in repo.index.diff(None)])
