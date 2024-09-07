@@ -2,6 +2,7 @@
 """ Script manages Git commands - add, commit and push """
 
 import git
+import git.repo
 import redis
 from sys import argv
 import os
@@ -18,4 +19,4 @@ redis_client = redis.Redis()
 
 if not file:
     cwd = os.getcwd()
-    print(cwd)
+    repo = git.repo
