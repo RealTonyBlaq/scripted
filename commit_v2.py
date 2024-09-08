@@ -42,7 +42,7 @@ def handler(signum=None, frame=None):
     today_commit = commit_count + push_count
 
     # Update commit count
-    redis_client.set(key, )
+    redis_client.set(key, today_commit)
     print(f'\nYou contributed to Open Source {today_commit} times today - {date_format}')
     print("Process terminated..")
     exit(0)
