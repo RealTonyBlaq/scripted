@@ -33,19 +33,22 @@ except InvalidGitRepositoryError as e:
 new_files = repo.untracked_files
 changed_files = [file.a_path for file in repo.index.diff(None)]
 
+
 # SIGINT handler
 def handler(signum=None, frame=None):
     """ Executed when CTRL+C is called """
     # Retrieve previous commit count from Redis
     key = f'day_{today}'
     commit_count = redis_client.get(key) or 0
-    today_commit = commit_count + push_count
+    today_commit = int(commit_count) + push_count
 
     # Update commit count
     redis_client.set(key, today_commit)
-    print(f'\nYou contributed to Open Source {today_commit} times today - {date_format}')
+    print(f'\nYour contribution to Open Source:\n\
+        {push_count} now \n{today_commit} today - {today}')
     print("Process terminated..")
     exit(0)
+
 
 signal.signal(signal.SIGINT, handler)
 
@@ -54,22 +57,24 @@ signal.signal(signal.SIGINT, handler)
 def push_to_repo(files: list) -> int:
     """ Commits to the repository """
     count = 1
-    print('\nCommitted files:')
     for file in files:
-        message = input(f'Please enter a commit message for {file}: ')
+        file_status = '[DELETED]' if not os.path.exists(file) else ''
+        message = input(f'Enter a commit message for {file}{file_status}: ')
         repo.git.add(file)
         repo.git.commit('-m', message)
         repo.git.push()
 
-        print(f'\t {count}. {file}')
-        count += 1
         time.sleep(2)
+
+    print('\nCommitted files:')
+    for file in files:
+        print(f'  {count}. {file}')
+        count += 1
 
     return len(files)
 
 
 if not file:
-
     push_count = push_to_repo(changed_files)
 
     if len(new_files) != 0:
@@ -79,18 +84,26 @@ if not file:
             push_count += push_to_repo(new_files)
 
 else:
-    message = input(f'Please enter a one-time commit message for {file}: ')
+    if not os.path.exists(file):
+        print(f'{file}: No such file or directory')
+        exit(1)
+
+    message = input(f'Enter a one-time commit message for {file}: ')
+    print('Running...')
     while True:
-        if file not in changed_files:
-            time.sleep(120)
+        modified_files = [file.a_path for file in repo.index.diff(None)]
+        if file not in modified_files:
+            time.sleep(120.00)
+            idle_time = datetime.now() - last_commit_time
+            if idle_time.seconds >= 480:
+                handler()
             continue
         repo.git.add(file)
         repo.git.commit('-m', message)
         repo.git.push()
 
         push_count += 1
-
-        time.sleep(300)
-
+        last_commit_time = datetime.now()
+        time.sleep(180.00)
 
 handler()
