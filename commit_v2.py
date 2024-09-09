@@ -59,13 +59,13 @@ def push_to_repo(files: list) -> int:
     """ Commits to the repository """
     count = 1
     for file in files:
-        file_status = '[DELETED]' if not os.path.exists(file) else ''
+        file_status = ' [DELETED]' if not os.path.exists(file) else ''
         message = input(f'Enter a commit message for {file}{file_status}: ')
         repo.git.add(file)
         repo.git.commit('-m', message)
         repo.git.push()
 
-        time.sleep(2)
+        time.sleep(1)
 
     print('\nCommitted files:')
     for file in files:
