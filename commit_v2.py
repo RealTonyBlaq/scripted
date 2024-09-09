@@ -45,7 +45,8 @@ def handler(signum=None, frame=None):
     # Update commit count
     redis_client.set(key, today_commit)
     print(f'\nYour contribution to Open Source:\n\
-        {push_count} now \n{today_commit} today - {today}')
+        {push_count} now \n\
+        {today_commit} today - {today}')
     print("Process terminated..")
     exit(0)
 
