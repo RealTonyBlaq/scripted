@@ -106,5 +106,6 @@ else:
             time.sleep(120.00)
             idle_time = datetime.now() - last_commit_time
             if idle_time.seconds >= 480:
-                handler()
+                break
+
 handler()
