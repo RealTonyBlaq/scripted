@@ -68,6 +68,7 @@ def push_to_repo(files: list) -> int:
         time.sleep(1)
 
     print('\nCommitted files:')
+    print('  None') if len(files) == 0 else print()
     for file in files:
         print(f'  {count}. {file}')
         count += 1
@@ -92,13 +93,6 @@ else:
     message = input(f'Enter a one-time commit message for {file}: ')
     print('Running...')
     while True:
-        modified_files = [file.a_path for file in repo.index.diff(None)]
-        if file not in modified_files:
-            time.sleep(120.00)
-            idle_time = datetime.now() - last_commit_time
-            if idle_time.seconds >= 480:
-                handler()
-            continue
         repo.git.add(file)
         repo.git.commit('-m', message)
         repo.git.push()
@@ -107,4 +101,10 @@ else:
         last_commit_time = datetime.now()
         time.sleep(180.00)
 
+        modified_files = [file.a_path for file in repo.index.diff(None)]
+        if file not in modified_files:
+            time.sleep(120.00)
+            idle_time = datetime.now() - last_commit_time
+            if idle_time.seconds >= 480:
+                handler()
 handler()
