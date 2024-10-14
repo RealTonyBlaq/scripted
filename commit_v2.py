@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """ Script manages Git commands - add, commit and push. """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import git
-from git.exc import InvalidGitRepositoryError
+from git.exc import InvalidGitRepositoryError, GitCommandError
 import os
+import git.exc
 import redis
 from sys import argv
 import signal
@@ -17,6 +18,7 @@ redis_client = redis.Redis()
 push_count = 0
 date_format = "%Y-%m-%d"
 today = datetime.now().strftime(date_format)
+expiry_time = 60 * 60 * 24 * 7
 
 try:
     file = argv[1]
@@ -43,7 +45,8 @@ def handler(signum=None, frame=None):
     today_commit = int(commit_count) + push_count
 
     # Update commit count
-    redis_client.set(key, today_commit)
+    redis_client.setex(key, expiry_time, today_commit)
+    print()
     print(f'\nYour contribution to Open Source:\n\
         {push_count} now \n\
         {today_commit} today - {today}')
@@ -57,30 +60,34 @@ signal.signal(signal.SIGINT, handler)
 # Commit function
 def push_to_repo(files: list) -> int:
     """ Commits to the repository """
-    count = 1
+    count = 0
     for file in files:
         file_status = ' [DELETED]' if not os.path.exists(file) else ''
         message = input(f'Enter a commit message for {file}{file_status}: ')
+        if message.lower() == 'skip':
+            print(f'{file} skipped.')
+            print()
+            continue
         repo.git.add(file)
         repo.git.commit('-m', message)
         repo.git.push()
+        count += 1
 
         time.sleep(1)
 
-    print('\nCommitted files:')
-    print('  None') if len(files) == 0 else print()
-    for file in files:
-        print(f'  {count}. {file}')
-        count += 1
+    if count > 0:
+        print('\nCommitted files:')
+        for file in files:
+            print(f'  {files.index(file) + 1}. {file}')
 
-    return len(files)
+    return count
 
 
 if not file:
     push_count = push_to_repo(changed_files)
 
     if len(new_files) != 0:
-        print(f'There are {len(new_files)} untracked files => {new_files}')
+        print(f'\nThere are {len(new_files)} untracked files => {new_files}')
         reply = input('Do you want to push them [Y/N]? ').lower()
         if reply in ['y', 'yes']:
             push_count += push_to_repo(new_files)
@@ -92,19 +99,25 @@ else:
 
     message = input(f'Enter a one-time commit message for {file}: ')
     print('Running...')
+    idle_time = timedelta(seconds=0)
+    
     while True:
-        repo.git.add(file)
-        repo.git.commit('-m', message)
-        repo.git.push()
+        try:
+            repo.git.add(file)
+            repo.git.commit('-m', message)
+            repo.git.push()
 
-        push_count += 1
-        last_commit_time = datetime.now()
-        time.sleep(180.00)
+            push_count += 1
+        except GitCommandError:
+            pass
+        finally:
+            last_commit_time = datetime.now()
+            time.sleep(180.00)
 
-        modified_files = [file.a_path for file in repo.index.diff(None)]
+        modified_files = [a_file.a_path for a_file in repo.index.diff(None)]
         if file not in modified_files:
             time.sleep(120.00)
-            idle_time = datetime.now() - last_commit_time
+            idle_time += (datetime.now() - last_commit_time)
             if idle_time.seconds >= 480:
                 break
 
