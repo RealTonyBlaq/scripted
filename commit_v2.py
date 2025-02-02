@@ -93,6 +93,28 @@ if not file:
             push_count += push_to_repo(new_files)
 
 else:
+    if file.startswith('-'):
+        cmd = file
+        if cmd == '-h':
+            print('Usage: commit_v2 [file]')
+            exit(0)
+        elif cmd == '-l':
+            print('List of files in the repository:')
+            for file in changed_files:
+                print(f'  {changed_files.index(file) + 1}. {file}')
+            exit(0)
+        elif cmd == '-once':
+            try:
+                file = argv[2]
+                push_count = push_to_repo([file])
+                handler()
+            except IndexError:
+                print('Usage: commit_v2 -once [file]')
+                exit(1)
+        else:
+            print('Invalid option')
+            exit(1)
+
     if not os.path.exists(file):
         print(f'{file}: No such file or directory')
         exit(1)
